@@ -1,0 +1,32 @@
+name: squirm
+version: 0.1.0
+
+authors:
+  - Giorgi Kavrelishvili <giorgi.kavrelishvili@pm.me>
+
+dependencies:
+  crest:
+    github: mamantoha/crest
+
+  lexbor:
+    github: kostya/lexbor
+
+  robots:
+    github: grkek/robots.cr
+    branch: master
+
+  redis:
+    github: stefanwille/crystal-redis
+
+  marionette:
+    github: watzon/marionette
+    branch: master
+
+development_dependencies:
+  ameba:
+    github: crystal-ameba/ameba
+    version: ~> 0.13.0
+
+crystal: ~> 1.2.0
+
+license: MIT
