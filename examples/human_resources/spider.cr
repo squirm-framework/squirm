@@ -32,6 +32,9 @@ module HumanResources
     # Concurrent requests per domain
     property concurrent_requests_per_domain : Int32 = 5
 
+    # Used by the engine to fetch the URLs
+    property fetcher : Squirm::Fetchers::Base = Squirm::Fetchers::Default.new
+
     # Used by the caching mechanism to retrieve the requests from the cache.
     def start_requests : Array(Squirm::Request)
       cache.list_requests!(base_url())

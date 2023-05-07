@@ -17,6 +17,7 @@ module Squirm
         loop do
           unless RequestStorage.instance.empty?(spider)
             request = RequestStorage.instance.pop!(spider)
+            request.spider = spider
 
             pool.spawn do
               begin

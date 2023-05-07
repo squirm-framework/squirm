@@ -35,9 +35,7 @@ module ResourcefulHumans
     #
     # If you want to use the Chrome fetcher add the chromedriver to your PATH
     #
-    def fetcher : Squirm::Fetchers::Base
-      Squirm::Fetchers::Chrome.new(self)
-    end
+    property fetcher : Squirm::Fetchers::Base = Squirm::Fetchers::Chrome.new
 
     # Used by the caching mechanism to retrieve the requests from the cache.
     def start_requests : Array(Squirm::Request)

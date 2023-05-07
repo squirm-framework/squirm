@@ -2,12 +2,13 @@ module Squirm
   class Request < Crest::Request
     Log = ::Log.for(self)
 
-    getter retry_count : Int32 = 0
+    property spider : Spider?
+    @retry_count : Int32 = 0
 
-    def filter(spider : Spider) : Request?
-      results = spider.request_filters.map do |filter|
-        filter.valid?(self, spider)
-      end
+    def filter : Request?
+      results = spider.try(&.request_filters.map do |filter|
+        filter.valid?(self, spider || raise "Spider can not be nil for a filtered request")
+      end) || [] of Bool
 
       unless results.all?
         return nil
@@ -16,10 +17,10 @@ module Squirm
       self
     end
 
-    def filter!(spider : Spider) : Request
-      results = spider.request_filters.map do |filter|
-        filter.valid?(self, spider)
-      end
+    def filter! : Request
+      results = spider.try(&.request_filters.map do |filter|
+        filter.valid?(self, spider || raise "Spider can not be nil for a filtered request")
+      end) || [] of Bool
 
       unless results.all?
         raise "Failed to filter the request #{request.url}"
