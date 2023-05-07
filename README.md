@@ -1,5 +1,5 @@
 <p align="center" width="100%">
-    <img src="https://www.pngkey.com/png/full/346-3465549_i-had-originally-seen-squirm-on-mst3k-about.png" height="250" href="https://github.com/squirm-framework/squirm">
+    <img src="https://github.com/squirm-framework/medias/blob/master/framework.svg" height="250" href="https://github.com/squirm-framework/squirm">
 </p>
 
 <p align="center">
