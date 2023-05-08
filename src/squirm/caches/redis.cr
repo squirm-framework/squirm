@@ -1,9 +1,12 @@
+require "redis"
+
 module Squirm
   module Caches
     class Redis < Base
       Log = ::Log.for(self)
 
       property id : String
+      property client : Synchronized(::Redis)
 
       def initialize(@id : String)
         @client = Synchronized(::Redis).new

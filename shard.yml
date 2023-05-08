@@ -1,5 +1,5 @@
 name: squirm
-version: 0.1.0
+version: 0.1.1
 
 authors:
   - Giorgi Kavrelishvili <giorgi.kavrelishvili@pm.me>
@@ -21,6 +21,10 @@ dependencies:
   marionette:
     github: watzon/marionette
     branch: master
+
+  rocksdb:
+    github: maiha/rocksdb.cr
+    version: 1.1.0
 
 development_dependencies:
   ameba:

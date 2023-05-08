@@ -15,7 +15,7 @@ module HumanResources
     property start_urls : Array(String) = ["https://www.hr.gov.ge/?pageNo=1"]
 
     # Caching mechanism used by the spider to cache the requests in case of a restart/failure.
-    property cache : Squirm::Caches::Base = Squirm::Caches::Redis.new(@@id)
+    property cache : Squirm::Caches::Base = Squirm::Caches::RocksDB.new(@@id)
 
     # Parser used by the spider to parse the HTML content.
     property parser : Squirm::Parser = Parser.new
