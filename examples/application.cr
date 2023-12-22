@@ -1,3 +1,4 @@
+require "../src/squirm/caches/redis"
 require "../src/squirm"
 require "./human_resources/**"
 require "./resourceful_humans/**"
@@ -6,14 +7,29 @@ Log.setup(:debug)
 
 engine = Squirm::Engine.new
 
-engine.add_spider(HumanResources::Spider.new)
-engine.add_spider(ResourcefulHumans::Spider.new)
+spiders = [
+  HumanResources::Spider.new,
+  ResourcefulHumans::Spider.new,
+] of Squirm::Spider
+
+spiders.each do |spider|
+  engine.add_spider(spider)
+end
+
+engine.run
 
 loop do
-  sleep 60
+  spiders.each do |spider|
+    unless Squirm::RequestStorage.instance.empty?(spider.id)
+      size = Squirm::RequestStorage
+        .instance
+        .requests
+        .[spider.id]
+        .size
 
-  engine.spiders.each do |spider|
-    queue_size = Squirm::RequestStorage.instance.requests[spider.id].size
-    Log.info { "Spider #{spider.id} is running and has queued #{queue_size} requests." } if queue_size != 0
+      Log.debug { "#{spider.id} running with #{size} request(s)" }
+    end
   end
+
+  sleep 30
 end

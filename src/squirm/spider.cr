@@ -12,7 +12,7 @@ module Squirm
     abstract def parse_item(request : Request, response : Response) : ParsedItem
     abstract def request_filters : Array(RequestFilters::Base)
     abstract def response_filters : Array(ResponseFilters::Base)
-    abstract def timeout : Time::Span
+    abstract def request_timeout : Time::Span
     abstract def concurrent_requests_per_domain : Int32
   end
 end

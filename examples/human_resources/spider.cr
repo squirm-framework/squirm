@@ -15,7 +15,10 @@ module HumanResources
     property start_urls : Array(String) = ["https://www.hr.gov.ge/?pageNo=1"]
 
     # Caching mechanism used by the spider to cache the requests in case of a restart/failure.
-    property cache : Squirm::Caches::Base = Squirm::Caches::RocksDB.new(@@id)
+    property cache : Squirm::Caches::Base = Squirm::Caches::Redis.new(@@id)
+
+    # Used by the engine to fetch the URLs.
+    property fetcher : Squirm::Fetchers::Base = Squirm::Fetchers::Default.new
 
     # Parser used by the spider to parse the HTML content.
     property parser : Squirm::Parser = Parser.new
@@ -26,21 +29,19 @@ module HumanResources
     # Used by the spider to filter the responses.
     property response_filters : Array(Squirm::ResponseFilters::Base) = [Squirm::ResponseFilters::ContentValidator.new(selector: ".Title-box")] of Squirm::ResponseFilters::Base
 
-    # Time spent between each request
-    property timeout : Time::Span = 5.seconds
+    # Time spent between each request.
+    property request_timeout : Time::Span = 5.seconds
 
-    # Concurrent requests per domain
-    property concurrent_requests_per_domain : Int32 = 5
+    # Concurrent requests per domain.
+    property concurrent_requests_per_domain : Int32 = 2
 
-    # Used by the engine to fetch the URLs
-    property fetcher : Squirm::Fetchers::Base = Squirm::Fetchers::Default.new
 
     # Used by the caching mechanism to retrieve the requests from the cache.
     def start_requests : Array(Squirm::Request)
       cache.list_requests!(base_url())
     end
 
-    # Parsing logic to identify the listing URLs and pagination URLs
+    # Parsing logic to identify the listing URLs and pagination URLs.
     def parse_item(request : Squirm::Request, response : Squirm::Response) : Squirm::ParsedItem
       cache.delete!(request.url)
 
@@ -76,7 +77,7 @@ module HumanResources
         .map { |href| Squirm::Utils.build_absolute_url(href, base_url) }
     end
 
-    # Parse HTML for pagination URLs
+    # Parse HTML for pagination URLs.
     def pagination_urls(document : Lexbor::Parser) : Array(String)
       document
         .find("li.PagedList-skipToNext a")

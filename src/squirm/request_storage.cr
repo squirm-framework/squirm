@@ -11,48 +11,61 @@ module Squirm
     getter requests : Synchronized(Hash(String, Array(Request))) = Synchronized(Hash(String, Array(Request))).new
     getter history : Synchronized(Hash(String, Array(String))) = Synchronized(Hash(String, Array(String))).new
 
-    def store(spider : Spider, request : Request)
-      if @requests.has_key?(spider.id)
-        unless @history[spider.id].includes?(request.url)
-          @history[spider.id].push(request.url)
-          @requests[spider.id].push(request)
+    def store(id : String, request : Request)
+      if @requests.has_key?(id)
+        unless @history[id].includes?(request.url)
+          @history[id].push(request.url)
+          @requests[id].push(request)
         end
       else
-        @history[spider.id] = [request.url]
-        @requests[spider.id] = [request]
+        @history[id] = [request.url]
+        @requests[id] = [request]
       end
     end
 
-    def store(spider : Spider, requests : Array(Request))
+    def store(id : String, requests : Array(Request))
       requests.each do |request|
-        store(spider, request)
+        store(id, request)
       end
     end
 
-    def store(spider : Spider, url : String)
-      store(spider, Request.new(:get, url))
+    def store(id : String, url : String)
+      store(id, Request.new(:get, url))
     end
 
-    def store(spider : Spider, urls : Array(String))
+    def store(id : String, urls : Array(String))
       urls.each do |url|
-        store(spider, url)
+        store(id, url)
       end
     end
 
-    def pop!(spider : Spider) : Request
-      @requests[spider.id].pop
+    def flush(id : String)
+      @requests[id] = [] of Request
     end
 
-    def pop?(spider : Spider) : Request?
-      @requests[spider.id].pop?
+    def clear(id : String)
+      @requests[id] = [] of Request
+      @history[id] = [] of String
     end
 
-    def flush(spider : Spider)
-      @requests[spider.id] = [] of Request
+    def pop!(id : String)
+      @requests[id].pop? || raise Exception.new("Request storage is empty")
     end
 
-    def empty?(spider : Spider) : Bool
-      @requests[spider.id].empty?
+    def delete_history(id : String, url : String)
+      @history[id].delete(url)
+    end
+
+    def seen?(id : String, url : String) : Bool
+      @history[id].includes?(url)
+    end
+
+    def empty?(id : String) : Bool
+      @requests[id].empty?
+    end
+
+    def exists?(id : String) : Bool
+      @requests[id]? != nil || @history[id]? != nil
     end
   end
 end

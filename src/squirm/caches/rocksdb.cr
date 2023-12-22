@@ -1,3 +1,4 @@
+require "./base"
 require "rocksdb"
 
 module Squirm
